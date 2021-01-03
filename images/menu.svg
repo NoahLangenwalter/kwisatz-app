@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+
+<svg 
+   role="img"
+   aria-labelledby="menu-icon-title menu-icon-desc"
+   xmlns="http://www.w3.org/2000/svg"
+   viewBox="0 0 170 170">
+  <title id="menu-icon-title">Open Menu</title>
+  <desc id="menu-icon-desc">A "hamburger" menu symbol, three horizontal lines in a column.</desc>
+  <g
+     transform="translate(0,-882.36216)">
+    <rect
+       rx="5.5235"
+       ry="5.5235"
+       y="934.73297"
+       x="45.518002"
+       height="11.047"
+       width="78.963997"
+       id="rect9466"
+       style="fill:#ffffff;" />
+    <rect
+       rx="5.5235"
+       ry="5.5235"
+       y="961.83868"
+       x="45.518002"
+       height="11.047"
+       width="78.963997"
+       id="rect9466-6"
+       style="fill:#ffffff;" />
+    <rect
+       rx="5.5235"
+       ry="5.5235"
+       y="988.9444"
+       x="45.518002"
+       height="11.047"
+       width="78.963997"
+       id="rect9466-6-0"
+       style="fill:#ffffff;" />
+  </g>
+</svg>

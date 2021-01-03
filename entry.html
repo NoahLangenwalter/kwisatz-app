@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <link rel="shortcut icon" href="favicon.png" type="image/png">
+    <title>Kwisatz Journal: New Entry</title>
+    <meta name="Description" content="An entry in the Kwisatz Journal">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href='https://fonts.googleapis.com/css?family=Nunito:200,300,400,600,700,800,900' rel='stylesheet'>
+    <style>
+        html {
+            font-size: 1em;
+            font-family: 'Nunito', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: dimgray;
+        }
+
+        body {
+            background: rgb(255, 108, 48);
+            background: linear-gradient(90deg, rgba(255, 108, 48, 1) 0%, rgba(255, 57, 70, 1) 100%);
+            margin: 0;
+            padding: .5rem;
+            display: flex;
+            justify-content: space-between;
+            flex-direction: column;
+            height: 98vh;
+        }
+
+        textarea,
+        button,
+        aside {
+            font-family: inherit;
+        }
+
+        .offscreen {
+            clip: rect(1px, 1px, 1px, 1px);
+            height: 1px;
+            overflow: hidden;
+            position: absolute;
+            white-space: nowrap;
+            /* added line */
+            width: 1px;
+        }
+
+        .offscreen:focus {
+            position: relative;
+            clip: auto;
+            width: auto;
+            height: auto;
+            overflow: auto;
+        }
+
+        #mainHeader {
+            padding: 1vh 0 2vh 0;
+            width: 100%;
+            height: 6vh;
+            min-height: 3rem;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .headerButton {
+            height: 100%;
+            width: auto;
+            margin: 0;
+            padding: 0;
+            border: 0;
+            background-color: transparent;
+        }
+
+        .headerButton img {
+            width: auto;
+            height: 100%;
+        }
+
+        #mainContent {
+            background-color: #ffffff;
+            width: auto;
+            height: 100%;
+            flex: 1;
+            border-radius: 1rem;
+            padding: 1rem 1.25rem;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #entry-createdDate {
+            font-weight: 400;
+            color: lightgray;
+        }
+
+        .entry-title {
+            border: none;
+            font-weight: 600;
+            font-size: 2em;
+            width: 100%;
+            resize: none;
+            min-height: 2rem;
+            overflow: hidden;
+            line-height: 2rem;
+            border-bottom: .125rem solid lightgray;
+            margin-bottom: .5rem;
+        }
+
+        #entry-title {
+            height: 2rem;
+        }
+
+        textarea:focus,
+        button:focus {
+            outline: none;
+        }
+
+        #entry-body {
+            flex: 1;
+            border: none;
+            font-weight: 400;
+            font-size: 1em;
+            width: 100%;
+            resize: none;
+            overflow: hidden;
+            margin-top: 1em;
+        }
+
+        #entry-tags {
+            margin: 0;
+            padding: 0;
+            border: 0;
+            background-color: transparent;
+            width: fit-content;
+        }
+
+        #entry-tags span {
+            display:inline-block;
+            background-color: gray;
+            color: white;
+            font-size: .8rem;
+            padding: .15rem .4rem;
+            border-radius: 1rem;
+            font-weight: 700;
+            margin-right: 0.15rem;
+        }
+
+        textarea::placeholder {
+            font-style:italic;
+            color: lightgray;
+        }
+    </style>
+</head>
+
+<body>
+    <header id="mainHeader">
+        <h1 id="mainHeader-title" class="offscreen">
+            Kwisatz Journal: New Entry
+        </h1>
+        <a id="backButton" class="headerButton" href="index.html"><img src="./images/back.svg" alt="Back" /></a>
+        <button id="optionsButton" class="headerButton"><img src="./images/options.svg" alt="Options" /></button>
+    </header>
+    <main id="mainContent">
+        <aside id="entry-createdDate"></aside>
+        <textarea id="entry-title" class="entry-title" placeholder="New Entry Title"></textarea>
+        <button id="entry-tags"></button>
+        <textarea id="entry-body" placeholder="New Entry Content"></textarea>
+    </main>
+    <script>
+        const clientTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        const titleElement = document.getElementById('entry-title');
+        const dateElement = document.getElementById('entry-createdDate');
+        const tagsElement = document.getElementById('entry-tags');
+        const bodyElement = document.getElementById('entry-body');
+        var savedData = {
+            title: "",
+            body: "",
+            tags: ["untagged"]
+        };
+        var entryData = {
+            title: "",
+            body: "",
+            tags: ["untagged"]
+        };
+        var saveTimeout = null;
+
+        var formatDate = function (date) {
+            var dateString = date.toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'numeric',
+                day: 'numeric',
+                hour: 'numeric',
+                minute: 'numeric',
+                timeZone: clientTimezone
+            });
+
+            return dateString.replace(",", "");
+        }
+
+        var loadEntry = function (entry) {
+            savedData = entry;
+            entryData = { ...entry };
+            var date = new Date(entry.createdDate);
+            var displayDate = formatDate(date);
+            dateElement.innerHTML = `<aside class="entry-date"><time datetime="${entry.createdDate}">${displayDate}</time></aside>`;
+
+            sizeTitleElement();
+
+            titleElement.value = entry.title;
+            var tagHtml = "";
+            entry.tags.forEach(function (tag, tagIndex) {
+                tagHtml += `<span class="entry-tag">${tag}</span>`;
+            });
+            tagsElement.innerHTML = tagHtml;
+            bodyElement.value = entry.body;
+
+            entryTitle = `Kwisatz Journal: ${entry.title}`
+            document.getElementById('mainHeader-title').innerText = entryTitle;
+            document.title = entryTitle;
+        }
+
+        var dataChanged = function () {
+            if ((savedData.title != entryData.title) ||
+                (savedData.body != entryData.body) ||
+                (savedData.tags.length != entryData.tags.length)) {
+                return true;
+            }
+
+            var savedSet = new Set(savedData.tags);
+            var entrySet = new Set(entryData.tags);
+            return [...savedSet].some(value => entrySet.has(value) == false);
+        }
+
+        var saveEntry = async function () {
+            if (saveTimeout !== null) {
+                clearTimeout(saveTimeout);
+                saveTimeout = null;
+            }
+
+            if (dataChanged() == false) {
+                return;
+            }
+
+            var method = "POST";
+            var url = "https://localhost:5001/api/journal/entries";
+            if ("id" in savedData) {
+                method = "PATCH";
+                url += `/${savedData.id}`;
+            }
+            
+            var body = JSON.stringify(entryData);
+
+            var response = await fetch(url, {
+                method: method,
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: body
+            });
+            
+            response.json().then(jsonData => {
+                savedData = jsonData;
+                entryData = { ...jsonData };
+            });
+        }
+
+        window.addEventListener("beforeunload", () => saveEntry());
+
+        var startSaveCountdown = function () {
+            if (saveTimeout !== null) {
+                clearTimeout(saveTimeout);
+                saveTimeout = null;
+            }
+            saveTimeout = setTimeout(() => {
+                saveTimeout = null;
+                saveEntry();
+            }, 1000)
+        }
+
+        const hiddenDiv = document.createElement('div')
+        var sizeTitleElement = function () {
+            hiddenDiv.classList.add("entry-title");
+            hiddenDiv.style.display = 'none';
+            hiddenDiv.style.whiteSpace = 'pre-wrap';
+            hiddenDiv.style.wordWrap = 'break-word';
+
+            titleElement.parentNode.appendChild(hiddenDiv);
+
+            var content = entryData.title;
+            hiddenDiv.innerHTML = content
+
+            hiddenDiv.style.visibility = 'hidden';
+            hiddenDiv.style.display = 'block';
+            titleElement.style.height = hiddenDiv.offsetHeight + 'px';
+
+            hiddenDiv.style.visibility = 'visible';
+            hiddenDiv.style.display = 'none';
+        }
+
+        titleElement.addEventListener("keydown", event => {
+            if (event.which == 13) { // newline
+                event.preventDefault();
+                return false;
+            }
+        });
+
+        titleElement.addEventListener("input", event => {
+            entryData.title = event.target.value;
+            sizeTitleElement();
+            startSaveCountdown();
+        });
+
+        bodyElement.addEventListener("input", event => {
+            entryData.body = event.target.value;
+            startSaveCountdown();
+        });
+
+
+        var urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has("id")) {
+            var entryId = urlParams.get("id");
+
+            fetch(`https://localhost:5001/api/journal/entries/${entryId}`).then(response => {
+                return response.json();
+            }).then(jsonData => {
+                loadEntry(jsonData);
+            }).catch(err => {
+                console.warn('Something went wrong.', err);
+            });
+        }
+        else {
+            var date = new Date();
+            var displayDate = formatDate(date);
+            dateElement.innerHTML = `<aside class="entry-date"><time datetime="${date.toISOString()}">${displayDate}</time></aside>`;
+            tagsElement.innerHTML = '<span class="entry-tag">untagged</span>';
+        }
+    </script>
+</body>
+
+</html>

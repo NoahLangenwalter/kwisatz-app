@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+
+<svg 
+   role="img"
+   aria-labelledby="options-icon-title options-icon-desc"
+   xmlns="http://www.w3.org/2000/svg"
+   viewBox="0 0 170 170">
+  <title id="options-icon-title">Options</title>
+  <desc id="options-icon-desc">An ellipsis, three dots in a row.</desc>
+  <g
+     transform="translate(0,-882.36216)">
+    <circle
+       style="fill:#ffffff;"
+       cx="48.921932"
+       cy="967.36218"
+       r="10.625001" />
+    <circle
+       style="fill:#ffffff;"
+       cx="121.07807"
+       cy="967.36218"
+       r="10.625001" />
+    <circle
+       style="fill:#ffffff;"
+       cx="85.000069"
+       cy="967.36218"
+       r="10.625001" />
+  </g>
+</svg>
